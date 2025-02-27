@@ -9,10 +9,12 @@ import { AuthToken, FakeData, User } from "tweeter-shared";
 import useToastListener from "../../toaster/ToastListenerHook";
 import InputFields from "../AuthenticationFields";
 import AuthenticationFields from "../AuthenticationFields";
-import { LoginPresenter, LoginView } from "../../../presenters/LoginPresenter";
+import { LoginPresenter } from "../../../presenters/LoginPresenter";
+import { AuthenticationView } from "../../../presenters/AuthenticationPresenter";
 
 interface Props {
   originalUrl?: string;
+  presenter?: LoginPresenter
 }
 
 const Login = (props: Props) => {
@@ -20,6 +22,7 @@ const Login = (props: Props) => {
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const { updateUserInfo } = useContext(UserInfoContext);
   const { displayErrorMessage } = useToastListener();
@@ -34,18 +37,19 @@ const Login = (props: Props) => {
     }
   };
 
-  const listener: LoginView = {
+  const listener: AuthenticationView = {
     displayErrorMessage: displayErrorMessage,
-    updateUserInfo: updateUserInfo
-  }
-  
-  const [presenter] = useState(new LoginPresenter(listener));
+    updateUserInfo: updateUserInfo,
+  };
 
-  const doLogin = () => presenter.doLogin(alias, password, rememberMe, props.originalUrl);
+  const [presenter] = useState(props.presenter ?? new LoginPresenter(listener));
+
+  const doLogin = () =>
+    presenter.doLogin(alias, password, rememberMe, navigate, props.originalUrl);
 
   const inputFieldGenerator = () => {
     return (
-      <AuthenticationFields 
+      <AuthenticationFields
         alias={alias}
         password={password}
         setAlias={setAlias}

@@ -1,42 +1,34 @@
 import { AuthToken, User } from "tweeter-shared";
-import useToastListener from "../components/toaster/ToastListenerHook";
-import useUserContext from "../components/userInfo/UserInfoHook";
 import { UserService } from "../model-service/UserService";
+import { Presenter, View } from "./Presenter";
 
-export interface UserNavHookView {
-    currentUser: User | null
-    authToken: AuthToken | null
-    displayErrorMessage: (message: string, bootstrapClasses?: string) => void
+export interface UserNavHookView extends View{
     setDisplayedUser: (user: User) => void
 }
 
-export class UserNavHookPresenter {
-
-    private view: UserNavHookView;
+export class UserNavHookPresenter extends Presenter<UserNavHookView>{
     private userService: UserService;
+    
     public constructor(view: UserNavHookView) {
-        this.view = view;
+        super(view);
         this.userService = new UserService();
     }
     
-    public async navigateToUser (event: React.MouseEvent): Promise<void> {
+    public async navigateToUser (event: React.MouseEvent, currentUser: User | null, authToken: AuthToken | null): Promise<void> {
         event.preventDefault();
-
-        try {
+        this.doFailureReportingOperation(async () => {
             const alias = this.extractAlias(event.target.toString());
 
-            const user = await this.userService.getUser(this.view.authToken!, alias);
+            const user = await this.userService.getUser(authToken!, alias);
 
             if (!!user) {
-            if (this.view.currentUser!.equals(user)) {
-                this.view.setDisplayedUser(this.view.currentUser!);
-            } else {
-                this.view.setDisplayedUser(user);
+                if (currentUser!.equals(user)) {
+                    this.view.setDisplayedUser(currentUser!);
+                } else {
+                    this.view.setDisplayedUser(user);
+                }
             }
-            }
-        } catch (error) {
-            this.view.displayErrorMessage("Failed to get user because of exception: ${error}");
-        }
+        },"get user");
     };
 
     public extractAlias = (value: string): string => {

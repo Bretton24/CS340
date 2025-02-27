@@ -11,15 +11,13 @@ const useUserNavHook = () => {
     const { displayErrorMessage } = useToastListener();
 
     const listener: UserNavHookView = {
-        currentUser: currentUser,
-        authToken: authToken,
         displayErrorMessage: displayErrorMessage,
         setDisplayedUser: setDisplayedUser
     }
 
     const [presenter] = useState(new UserNavHookPresenter(listener));
     
-    const navigateToUser = (event: React.MouseEvent) => presenter.navigateToUser(event);
+    const navigateToUser = (event: React.MouseEvent) => presenter.navigateToUser(event, currentUser, authToken);
     return (
         navigateToUser
     );

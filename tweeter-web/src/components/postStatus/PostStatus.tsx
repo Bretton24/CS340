@@ -2,11 +2,14 @@ import "./PostStatus.css";
 import { useState } from "react";
 import { useContext } from "react";
 import { UserInfoContext } from "../userInfo/UserInfoProvider";
-import { AuthToken, Status } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
 import { PostStatusPresenter, PostStatusView } from "../../presenters/PostStatusPresenter";
 
-const PostStatus = () => {
+interface Props {
+  presenter?: PostStatusPresenter
+}
+
+const PostStatus = (props?: Props) => {
   const { displayErrorMessage, displayInfoMessage, clearLastInfoMessage } =
     useToastListener();
 
@@ -16,7 +19,7 @@ const PostStatus = () => {
 
   
 
-  const submitPost = (event: React.MouseEvent) => presenter.submitPost(event);
+  const submitPost = (event: React.MouseEvent) => presenter.submitPost(event, post, currentUser, authToken!);
   const clearPost = (event: React.MouseEvent) => {
     event.preventDefault();
     setPost("");
@@ -27,16 +30,13 @@ const PostStatus = () => {
   };
 
   const listener: PostStatusView = {
-    post:post,
-    currentUser: currentUser,
-    authToken: authToken!,
     clearPost: clearPost,
     displayErrorMessage: displayErrorMessage,
     displayInfoMessage: displayInfoMessage,
     clearLastInfoMessage: clearLastInfoMessage
 }
 
-  const presenter: PostStatusPresenter = new PostStatusPresenter(listener);
+  const presenter: PostStatusPresenter = props?.presenter ?? new PostStatusPresenter(listener);
   
   return (
     <div className={isLoading ? "loading" : ""}>
@@ -45,6 +45,7 @@ const PostStatus = () => {
           <textarea
             className="form-control"
             id="postStatusTextArea"
+            aria-label="textField"
             rows={10}
             placeholder="What's on your mind?"
             value={post}
@@ -58,6 +59,7 @@ const PostStatus = () => {
             id="postStatusButton"
             className="btn btn-md btn-primary me-1"
             type="button"
+            aria-label="postStatusButton"
             disabled={checkButtonStatus()}
             style={{ width: "8em" }}
             onClick={(event) => submitPost(event)}
@@ -76,6 +78,7 @@ const PostStatus = () => {
             id="clearStatusButton"
             className="btn btn-md btn-secondary"
             type="button"
+            aria-label="clearButton"
             disabled={checkButtonStatus()}
             onClick={(event) => clearPost(event)}
           >

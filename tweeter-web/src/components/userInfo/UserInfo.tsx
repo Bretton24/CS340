@@ -3,9 +3,9 @@ import { useContext } from "react";
 import { UserInfoContext } from "../userInfo/UserInfoProvider";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { AuthToken, FakeData, User } from "tweeter-shared";
 import useToastListener from "../toaster/ToastListenerHook";
-import { UserInfoPresenter, UserInfoView } from "../../presenters/UserInfoPresenter";
+import { UserInfoPresenter } from "../../presenters/UserInfoPresenter";
+import { UserInfoHelpView } from "../../presenters/UserInfoHelpPresenter";
 
 const UserInfo = () => {
   const [isFollower, setIsFollower] = useState(false);
@@ -28,18 +28,15 @@ const UserInfo = () => {
     presenter.setNumbFollowees(authToken!, displayedUser!);
     presenter.setNumbFollowers(authToken!, displayedUser!);
   }, [displayedUser]);
-  
 
-  const listener: UserInfoView = {
+  const listener: UserInfoHelpView = {
     setFolloweeCount: setFolloweeCount,
     setFollowerCount: setFollowerCount,
     displayErrorMessage: displayErrorMessage,
     displayInfoMessage: displayInfoMessage,
     clearLastInfoMessage: clearLastInfoMessage,
     setIsFollower: setIsFollower,
-    displayedUser: displayedUser,
-    authToken: authToken
-  }
+  };
 
   const presenter: UserInfoPresenter = new UserInfoPresenter(listener);
 
@@ -47,7 +44,6 @@ const UserInfo = () => {
     event.preventDefault();
     setDisplayedUser(currentUser!);
   };
-
 
   return (
     <div className={isLoading ? "loading" : ""}>
@@ -96,7 +92,13 @@ const UserInfo = () => {
                       className="btn btn-md btn-secondary me-1"
                       type="submit"
                       style={{ width: "6em" }}
-                      onClick={(event) => presenter.unfollowDisplayedUser(event)}
+                      onClick={(event) =>
+                        presenter.unfollowDisplayedUser(
+                          event,
+                          authToken,
+                          displayedUser
+                        )
+                      }
                     >
                       {isLoading ? (
                         <span
@@ -114,7 +116,13 @@ const UserInfo = () => {
                       className="btn btn-md btn-primary me-1"
                       type="submit"
                       style={{ width: "6em" }}
-                      onClick={(event) => presenter.followDisplayedUser(event)}
+                      onClick={(event) =>
+                        presenter.followDisplayedUser(
+                          event,
+                          authToken,
+                          displayedUser
+                        )
+                      }
                     >
                       {isLoading ? (
                         <span

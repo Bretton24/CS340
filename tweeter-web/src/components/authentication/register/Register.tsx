@@ -53,12 +53,12 @@ const Register = () => {
       updateUserInfo: updateUserInfo,
       setImageBytes: setImageBytes,
       setImageFileExtension: setImageFileExtension,
-      setImageUrl: setImageUrl
+      setImageUrl: setImageUrl,
     }
     
   const [presenter] = useState(new RegisterPresenter(listener));
 
-  const doRegister = () => presenter.doRegister(firstName,lastName,alias, password, rememberMe, imageBytes,imageFileExtension)
+  const doRegister = () => presenter.doRegister(firstName,lastName,alias, password, rememberMe, imageBytes,imageFileExtension, navigate)
  
   const inputFieldGenerator = () => {
     return (
