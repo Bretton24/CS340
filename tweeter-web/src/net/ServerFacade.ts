@@ -1,16 +1,22 @@
 import {
+  AuthToken,
   FollowerStatusRequest,
   FollowerStatusResponse,
+  GetUserRequest,
+  GetUserResponse,
   PagedStatusItemRequest,
     PagedStatusItemResponse,
     PagedUserItemRequest,
     PagedUserItemResponse,
     PostStatusRequest,
+    RegisterRequest,
+    RegisterOrLoginResponse,
     Status,
     TweeterRequest,
     TweeterResponse,
     User,
     UserDto,
+    LoginRequest,
   } from "tweeter-shared";
   import { ClientCommunicator } from "./ClientCommunicator";
   
@@ -133,4 +139,72 @@ import {
         throw new Error(response.message ?? errorMessage);
       }
     }
+
+    public async getUser(
+      request: GetUserRequest,
+      endpoint: string,
+      errorMessage: string
+    ): Promise<User | null> {
+      const response = await this.clientCommunicator.doPost<GetUserRequest,GetUserResponse>(
+        request,
+        endpoint
+      )
+
+      if (response.success){
+        if (response.user == null){
+          return null;
+        }
+        else {
+          return User.fromDto(response.user)
+        }
+      }
+      throw new Error(errorMessage);
+    }
+
+    public async register(
+      request: RegisterRequest,
+      endpoint: string,
+      errorMessage: string
+    ): Promise<[User, AuthToken]> {
+      const response = await this.clientCommunicator.doPost<RegisterRequest,RegisterOrLoginResponse>(
+        request,
+        endpoint
+      )
+
+      if (response.success){
+        if (response.user == null || response.authToken == null){
+          throw new Error(errorMessage);
+        }
+        else {
+          const user = User.fromDto(response.user);
+          const token = AuthToken.fromDto(response.authToken);
+          return [user!,token!]
+        }
+      }
+      throw new Error(errorMessage);
+    }
+
+    public async login(
+      request: LoginRequest,
+      endpoint: string,
+      errorMessage: string
+    ): Promise<[User, AuthToken]> {
+      const response = await this.clientCommunicator.doPost<LoginRequest,RegisterOrLoginResponse>(
+        request,
+        endpoint
+      )
+
+      if (response.success){
+        if (response.user == null || response.authToken == null){
+          throw new Error(errorMessage);
+        }
+        else {
+          const user = User.fromDto(response.user);
+          const token = AuthToken.fromDto(response.authToken);
+          return [user!,token!]
+        }
+      }
+      throw new Error(errorMessage);
+    }
   }
+
