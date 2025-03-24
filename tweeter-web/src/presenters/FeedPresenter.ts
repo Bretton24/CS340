@@ -6,7 +6,7 @@ import { PAGE_SIZE } from "./PagedItemPresenter";
 export class FeedPresenter extends StatusItemPresenter {
 
   protected getMoreItems(authToken: AuthToken, userAlias: string): Promise<[Status[], boolean]> {
-    return this.service.loadMore(authToken,userAlias,PAGE_SIZE,this.lastItem);
+    return this.service.loadMore(authToken,userAlias,PAGE_SIZE,this.lastItem,false);
   }
     
   protected getItemDescription(): string {

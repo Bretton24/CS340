@@ -1,6 +1,12 @@
 BUCKET='tweeter-server-s3-bucket'
 LAMBDA_ROLE='arn:aws:iam::748948722743:role/Checkpoint3'
 EDIT_LAMBDALIST='
-tweeterGetFollowees | lambda/follow/GetFolloweesLambda.handler
+tweeterGetFollowees | lambda/follow/GetFollowLambda.handler
+tweeterGetFollowers | lambda/follow/GetFollowLambda.handler
+tweeterGetFeed      | lambda/status/GetStatusLambda.handler
+tweeterGetStory     | lambda/status/GetStatusLambda.handler
+tweeterPostStatus   | lambda/status/GetPostStatusLambda.handler
+tweeterGetFollowerStatus | lambda/follow/GetFollowerStatusLambda.handler
+tweeterGetLogout    |   lambda/logging/GetLogoutLambda.handler
 '
-LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:748948722743:layer:tweeterLambdaLayer:4'
+LAMBDALAYER_ARN='arn:aws:lambda:us-east-1:748948722743:layer:tweeterLambdaLayer:15'

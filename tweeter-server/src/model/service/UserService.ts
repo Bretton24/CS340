@@ -1,8 +1,7 @@
-import { AuthToken, FakeData, FollowerStatusRequest, TweeterRequest, User } from "tweeter-shared";
+import { AuthToken, FakeData, User, UserDto } from "tweeter-shared";
 import { Buffer } from "buffer";
-import { Service } from "./Service";
 
-export class UserService extends Service {
+export class UserService {
     public async login(
         alias: string,
         password: string
@@ -39,13 +38,9 @@ export class UserService extends Service {
         return [user, FakeData.instance.authToken];
       };
 
-      public async logout(authToken: AuthToken): Promise<void>{
+      public async logout(token: string): Promise<void>{
         // Pause so we can see the logging out message. Delete when the call to the server is implemented.
         await new Promise((res) => setTimeout(res, 1000));
-        const request: TweeterRequest = {
-          token: authToken.token
-        }
-        this.serverFacade.logout(request,"/logout/list","unable to logout");
       };
 
     public async getUser(
@@ -80,7 +75,7 @@ export class UserService extends Service {
       };
 
     public async getFollowerCount(
-        authToken: AuthToken,
+        token: AuthToken,
         user: User
       ): Promise<number> {
         // TODO: Replace with the result of calling server
@@ -103,16 +98,12 @@ export class UserService extends Service {
     };
 
     public async getIsFollowerStatus (
-        authToken: AuthToken,
-        user: User,
-        selectedUser: User
+        token: string,
+        user: UserDto,
+        selectedUser: UserDto
       ): Promise<boolean>{
-        const request: FollowerStatusRequest = {
-          token: authToken.token,
-          user: user.dto,
-          selectedUser: selectedUser.dto
-        }
-        return this.serverFacade.followerStatus(request,"/followerstatus/list","Unable to determine follower status");
+        // TODO: Replace with the result of calling server
+        return FakeData.instance.isFollower();
     };
 
     
